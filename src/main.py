@@ -64,6 +64,7 @@ class Crawler():
 
 
 	def __get_items_from_list__(self, list_items):
+		# helper function to reappend a new list for a csv work
 
 		ready_list_item = []
 		for items in list_items:
@@ -79,8 +80,10 @@ class Crawler():
 
 
 	def loop(self):
+		# make neccesary amount of pages needed to crawling
+
 		list_items = [] 
-		for i in range(0, 2):
+		for i in range(0, 11):
 			self.make_soup()
 			raw_items = self.get_items_list()
 			items = self.get_data(raw_items)
@@ -89,16 +92,25 @@ class Crawler():
 			list_items.append(items)
 			i += 1
 
-		ready_item = self.__get_items_from_list__(list_items)
+		ready_items = self.__get_items_from_list__(list_items)
 
-		return ready_item
+		return ready_items
 
 
-	def make_xml(self, item_list):
+	def make_csv(self, ready_items):
 
-		pass
+		with open("src/GPU_list.csv", "w", encoding="utf-8", newline='') as file:
+			
+			writer = csv.writer(file)
+
+			writer.writerow(["name", "condition", "rating", "cost", "url"])
+
+			for item in ready_items:
+				writer.writerow([item[0], item[1], item[2], item[3], item[4]])
+
 
 	def exit_driver(self):
+		# exit bot driver after work done
 
 		self.driver.close()
 
@@ -109,8 +121,8 @@ if __name__ == "__main__":
 	# crawler.make_soup()
 	# items = crawler.get_items_list()
 	# item_list = crawler.get_data(items)
-	items = crawler.loop()
-	print(items)
-	# crawler.exit_driver()
+	ready_items = crawler.loop()
+	crawler.exit_driver()
+	crawler.make_csv(ready_items)
 	# main.loop()
 	# main.make_xml(item_list)
